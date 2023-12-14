@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro Gratuito</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Lembre-se de adicionar o caminho correto para seu arquivo de estilos -->
+</head>
+<body>
+
+<div className="form">
+      
+    <ul className="tab-group">
+        <li className="tab active"><a href="#signup">Cadastrar</a></li>
+        <li className="tab"><a href="#login">Entrar</a></li>
+    </ul>
+    
+    <div className="tab-content">
+        <div id="signup">   
+            <h1>Cadastro Gratuito</h1>
+            
+            <form action="/" method="post">
+            
+            <div className="top-row">
+                <div className="field-wrap">
+                    <label>
+                        Nome<span className="req">*</span>
+                    </label>
+                    <input type="text" required autocomplete="off" />
+                </div>
+            
+                <div className="field-wrap">
+                    <label>
+                        Telefone<span className="req">*</span>
+                    </label>
+                    <input type="text"required autocomplete="off"/>
+                </div>
+            </div>
+
+            <div className="field-wrap">
+                <label>
+                    Email Address<span className="req">*</span>
+                </label>
+                <input type="email"required autocomplete="off"/>
+            </div>
+            
+            <div className="field-wrap">
+                <label>
+                    Senha<span className="req">*</span>
+                </label>
+                <input type="password"required autocomplete="off"/>
+            </div>
+            
+            <button type="submit" className="button button-block">Cadastrar</button>
+            
+            </form>
+
+        </div>
+    </div>
+    
+</div>
+
+</body>
+</html>

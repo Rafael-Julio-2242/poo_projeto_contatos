@@ -1,95 +1,108 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+import { FormEvent, useState } from "react";
+import "./cadastroPage.css";
+import { useRouter } from "next/navigation";
+import Cadastro from "@/components/Cadastro";
+import Login from "@/components/Login";
+import { validaClient } from "@/app/api/buscaUser/route";
+import Swal from "sweetalert2";
+import { adicionaUser } from "./api/adicionaUser/route";
 
 export default function Home() {
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [senha, setSenha] = useState("");
+
+  const [isLogin, setIsLogin] = useState(false);
+
+  const router = useRouter();
+
+  const handleCadastro = async (e: FormEvent) => {
+    e.preventDefault();
+    console.log("Cadastro :D");
+
+    const res = await adicionaUser({nome, email, telefone, senha});
+
+    console.log('Res: ');
+    console.log(res)
+
+    const resp = await res.json();
+    console.log('Res Data: ');
+    console.log(resp.body);
+
+
+    //router.push(`/leads/${resp.body.id}`);
+
+  };
+
+  const handleLogin = async (e: FormEvent) => {
+    e.preventDefault();
+
+    console.log("Log in");
+
+    const res = await validaClient({ email: email, senha: senha });
+
+    if(res.status === 200) {
+      console.log('Usuario existente');
+
+      const resp = await res.json();
+
+      console.log(resp);
+
+      router.push(`/leads/${resp.body.id}`);
+
+    } else {
+      const resp = await res.json();
+
+      Swal.fire({
+        icon: "error",
+        title: "Ocorreu um Problema!",
+        text: `${resp.body.message}`,
+        
+      });
+    }
+
+  };
+
+  const componentesInicio = [
+    <Cadastro
+      key={0}
+      setNome={setNome}
+      setEmail={setEmail}
+      setSenha={setSenha}
+      setTelefone={setTelefone}
+      handleSubmit={handleCadastro}
+    />,
+    <Login
+      key={1}
+      setEmail={setEmail}
+      setSenha={setSenha}
+      handleSubmit={handleLogin}
+    />,
+  ];
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <>
+      <div className="form">
+        <ul className="tab-group">
+          <li className={isLogin ? "tab" : "tab active"}>
+            <a onClick={() => setIsLogin(false)}>Cadastrar</a>
+          </li>
+          <li className={isLogin ? "tab active" : "tab"}>
+            <a onClick={() => setIsLogin(true)}>Entrar</a>
+          </li>
+        </ul>
+
+        <div className="tab-content">
+          <div id="login">
+            <h1>Bem Vindo!</h1>
+
+            {isLogin && componentesInicio[1]}
+            {!isLogin && componentesInicio[0]}
+          </div>
         </div>
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    </>
+  );
 }

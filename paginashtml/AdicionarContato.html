@@ -1,0 +1,39 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Contato</title>
+</head>
+<body>
+
+    <div className="text-center">
+        <h1 className="display-4">Cadastrar Contato</h1>
+    </div>
+
+    <form action="/Contato/Criar" method="post">
+
+        <div className="form-group">
+            <label for="Nome">Nome</label>
+            <input type="text" name="Nome" id="Nome" className="form-control" placeholder="Digite o nome do contato">
+            <!-- Adicione a mensagem de validação manualmente se necessário -->
+        </div>
+
+        <div className="form-group">
+            <label for="email">Descricao</label>
+            <input type="text" name="Email" id="email" className="form-control" placeholder="Digite o email do contato">
+            <!-- Adicione a mensagem de validação manualmente se necessário -->
+        </div>
+
+        <div className="form-group">
+            <label for="celular">Celular</label>
+            <input type="text" name="Celular" id="celular" className="form-control" placeholder="Digite o celular do contato">
+            <!-- Adicione a mensagem de validação manualmente se necessário -->
+        </div>
+
+        <button type="submit" className="btn btn-primary w-100">Adicionar</button>
+        <br></br>
+        <a href="/Contato/Index" className="btn btn-secondary w-100">Voltar</a>
+    </form>
+
+</body>
+</html>
