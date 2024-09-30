@@ -21,6 +21,8 @@ export async function adicionaUser(data: data){
 
   const jsonRequest = JSON.stringify(jsonStruct);
 
+  // Aqui, eu preciso armazenar os dados do usuário no Local Storage
+
   const res = await fetch(`http://26.161.212.190/user`, {
     method: 'POST',
     body: jsonRequest,

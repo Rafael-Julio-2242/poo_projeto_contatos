@@ -5,8 +5,9 @@ import React, { useEffect, useState } from "react";
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 
 import '../app/leads/[user]/leadsPage.css';
+import { Lead } from "@/interfaces/lead";
 
-export default function LeadsTable({ id }: { id: number }) {
+export default function LeadsTable({ user }: { user: string }) {
   const [tableData, setTableData] = useState<any[]>([]);
 
   const router = useRouter();
@@ -15,9 +16,22 @@ export default function LeadsTable({ id }: { id: number }) {
 
   useEffect(() => {
     async function BuscarLeads() {
-      const res = await buscaLeads(id).then((data) => data.json());
-  
-      setTableData(res.body);
+
+      const userEmail = user.split('-')[1];
+
+      const leads = localStorage.getItem('leads');
+
+      if (!leads) {
+        localStorage.setItem('leads', JSON.stringify([]));
+        setTableData([]);
+        return;
+      }
+
+      const leadsArray: Lead[] = JSON.parse(leads);
+
+      const filteredLeads = leadsArray.filter((lead) => lead.user.email === userEmail);
+
+      setTableData(filteredLeads);
     }
     BuscarLeads();
   },[]);
@@ -35,9 +49,9 @@ export default function LeadsTable({ id }: { id: number }) {
           </tr>
         </thead>
         <tbody>
-          {tableData.map((lead) => (
-            <tr key={lead.id}>
-              <th scope="row">{lead.id}</th>
+          {tableData.map((lead, index) => (
+            <tr key={index}>
+              <th scope="row">{index}</th>
               <td>{lead.name}</td>
               <td>{lead.description}</td>
               <td>{lead.foneNumber}</td>

@@ -45,7 +45,7 @@ export default function Leads({ params }: { params: { user: string } }) {
 
         <div className="divTable">
 
-          <LeadsTable id={parseInt(params.user)} />
+          <LeadsTable user={params.user} />
 
         </div>
 

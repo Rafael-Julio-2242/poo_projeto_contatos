@@ -7,6 +7,7 @@ import Login from "@/components/Login";
 import { validaClient } from "@/app/api/buscaUser/route";
 import Swal from "sweetalert2";
 import { adicionaUser } from "./api/adicionaUser/route";
+import { User } from "@/interfaces/user";
 
 export default function Home() {
   const [nome, setNome] = useState("");
@@ -22,18 +23,20 @@ export default function Home() {
     e.preventDefault();
     console.log("Cadastro :D");
 
-    const res = await adicionaUser({nome, email, telefone, senha});
+    console.log("Adicionar Usuario");
 
-    console.log('Res: ');
-    console.log(res)
+    const users = localStorage.get('users');
 
-    const resp = await res.json();
-    console.log('Res Data: ');
-    console.log(resp.body);
+    if (!users) {
+      localStorage.setItem('users', JSON.stringify([]));
+    }
 
+    const usersArray: User[] = JSON.parse(localStorage.getItem('users')!);
 
-    //router.push(`/leads/${resp.body.id}`);
+    usersArray.push({ name: nome, email: email, foneNumber: telefone, password: senha });
+    localStorage.setItem('users', JSON.stringify(usersArray));
 
+    router.push(`/leads/${`user-${email}`}`);
   };
 
   const handleLogin = async (e: FormEvent) => {
@@ -41,28 +44,42 @@ export default function Home() {
 
     console.log("Log in");
 
-    const res = await validaClient({ email: email, senha: senha });
+    const users = localStorage.get('users');
 
-    if(res.status === 200) {
-      console.log('Usuario existente');
-
-      const resp = await res.json();
-
-      console.log(resp);
-
-      router.push(`/leads/${resp.body.id}`);
-
-    } else {
-      const resp = await res.json();
-
+    if (!users) {
       Swal.fire({
         icon: "error",
         title: "Ocorreu um Problema!",
-        text: `${resp.body.message}`,
-        
+        text: "Usuário não cadastrado!",
       });
+      return;
     }
 
+    const usersArray: User[] = JSON.parse(users);
+
+    const user = usersArray.find((user) => user.email === email);
+
+    if (!user) {
+      Swal.fire({
+        icon: "error",
+        title: "Ocorreu um Problema!",
+        text: "Email ou Senha Incorretos!",
+      });
+      return;
+    }
+
+    const { password } = user;
+
+    if (password !== senha) {
+      Swal.fire({
+        icon: "error",
+        title: "Ocorreu um Problema!",
+        text: "Email ou Senha Incorretos!",
+      });
+      return;
+    }
+
+    router.push(`/leads/${`user-${email}`}`);
   };
 
   const componentesInicio = [
@@ -83,26 +100,24 @@ export default function Home() {
   ];
 
   return (
-    <>
-      <div className="form">
-        <ul className="tab-group">
-          <li className={isLogin ? "tab" : "tab active"}>
-            <a onClick={() => setIsLogin(false)}>Cadastrar</a>
-          </li>
-          <li className={isLogin ? "tab active" : "tab"}>
-            <a onClick={() => setIsLogin(true)}>Entrar</a>
-          </li>
-        </ul>
+    <div className="form">
+      <ul className="tab-group">
+        <li className={isLogin ? "tab" : "tab active"}>
+          <a onClick={() => setIsLogin(false)}>Cadastrar</a>
+        </li>
+        <li className={isLogin ? "tab active" : "tab"}>
+          <a onClick={() => setIsLogin(true)}>Entrar</a>
+        </li>
+      </ul>
 
-        <div className="tab-content">
-          <div id="login">
-            <h1>Bem Vindo!</h1>
+      <div className="tab-content">
+        <div id="login">
+          <h1>Bem Vindo!</h1>
 
-            {isLogin && componentesInicio[1]}
-            {!isLogin && componentesInicio[0]}
-          </div>
+          {isLogin && componentesInicio[1]}
+          {!isLogin && componentesInicio[0]}
         </div>
       </div>
-    </>
+    </div>
   );
 }
