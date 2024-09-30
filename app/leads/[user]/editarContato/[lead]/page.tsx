@@ -1,13 +1,18 @@
 'use client'
-import React, { FormEvent } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import './editarContato.css';
+import { Lead } from "@/interfaces/lead";
 
 
 export default function EditarContatoPage() {
 
   const params = useParams();
+
+  const [nome, setNome] = useState('');
+  const [descricao, setDescricao] = useState('');
+  const [celular, setCelular] = useState('');
 
   console.log(params);
 
@@ -16,9 +21,53 @@ export default function EditarContatoPage() {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
+    // Preciso atualizar os dados
+    const leads = localStorage.getItem('leads');
+
+    if (!leads) {
+      localStorage.setItem('leads', JSON.stringify([]));
+      router.replace(`/leads/${params.user}`);
+      return;
+    }
+
+    const leadsArray: Lead[] = JSON.parse(leads);
+
+    const leadsArrayAtualizado = leadsArray.map((lead) => {
+      
+    });
+
     router.replace(`/leads/${params.user}`);
 
   }
+
+  useEffect(() => {
+
+    async function BuscaDadosContato() {
+
+      const leads = localStorage.getItem('leads');
+
+      if (!leads) {
+        localStorage.setItem('leads', JSON.stringify([]));
+        router.back();
+        return;
+      }
+
+      const leadsArray: Lead[] = JSON.parse(leads);
+
+      const lead = leadsArray.find((lead) => lead.foneNumber === params.lead.toString());
+
+      if (lead === undefined) {
+        router.back();
+        return;
+      }
+
+      setNome(lead.name);
+      setDescricao(lead.description);
+      setCelular(lead.foneNumber);
+    }
+
+    BuscaDadosContato();
+  },[]);
 
   return (
     <>
@@ -38,6 +87,8 @@ export default function EditarContatoPage() {
               name="Nome"
               className="form-control"
               placeholder="Digite o nome do contato"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
             />
           </div>
 
@@ -47,7 +98,9 @@ export default function EditarContatoPage() {
               type="text"
               name="Email"
               className="form-control"
-              placeholder="Digite o email do contato"
+              placeholder="Digite a descrição do contato"
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
             />
           </div>
 
@@ -58,6 +111,8 @@ export default function EditarContatoPage() {
               name="Celular"
               className="form-control"
               placeholder="Digite o celular do contato"
+              value={celular}
+              onChange={(e) => setCelular(e.target.value)}
             />
           </div>
 

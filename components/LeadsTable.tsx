@@ -8,7 +8,7 @@ import '../app/leads/[user]/leadsPage.css';
 import { Lead } from "@/interfaces/lead";
 
 export default function LeadsTable({ user }: { user: string }) {
-  const [tableData, setTableData] = useState<any[]>([]);
+  const [tableData, setTableData] = useState<Lead[]>([]);
 
   const router = useRouter();
 
@@ -58,14 +58,14 @@ export default function LeadsTable({ user }: { user: string }) {
               <td>
                 <div className="btn-group" role="group">
                   <a
-                    href={path+"/editarContato"}
+                    href={path+`/editarContato/${lead.foneNumber}`}
                     role="button"
                     className="btn btn-primary"
                   >
                     Editar
                   </a>
                   <a
-                    href={path+`/confirmarExclusao/${lead.id}`}
+                    href={path+`/confirmarExclusao/${lead.foneNumber}`}
                     role="button"
                     className="btn btn-danger"
                   >

@@ -2,10 +2,8 @@
 import React, { FormEvent, useState } from "react";
 import "../../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import './adicionarContato.css';
-
 import { useParams, useRouter } from "next/navigation";
-
-import { adicionaLead } from "@/app/api/adicionaLead/route";
+import { Lead } from "@/interfaces/lead";
 
 
 export default function AdicionarContatoPage() {
@@ -18,17 +16,32 @@ export default function AdicionarContatoPage() {
 
   const router = useRouter();
 
-  const id = parseInt(params.user.toString());
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    const res = await adicionaLead({ id ,nome, descricao, celular});
+    // Adicionar lead ao localStorage
 
-    console.log(res);
+    let leads = localStorage.getItem('leads');
+
+    if (!leads) {
+      leads = JSON.stringify([]);
+      localStorage.setItem('leads', JSON.stringify(leads));
+    }
+
+    const leadsArray: Lead[] = JSON.parse(leads);
+
+    leadsArray.push({
+      user: {
+        email: params.user.toString()
+      },
+      name: nome,
+      description: descricao,
+      foneNumber: celular
+    });
+
+    localStorage.setItem('leads', JSON.stringify(leadsArray));
 
     router.replace(`/leads/${params.user}`)
-
   }
 
   return (

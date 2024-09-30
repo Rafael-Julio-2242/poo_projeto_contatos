@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import "./confirmarExclusao.css";
 
 import { deletaLead } from "@/app/api/deletaLead/route";
+import { Lead } from "@/interfaces/lead";
 
 export default function ConfirmarExclusaoPage() {
 
@@ -16,16 +17,25 @@ export default function ConfirmarExclusaoPage() {
 
     console.log(params);
 
-    const id = parseInt(params.lead.toString());
-
     const handleApagar = async () => {
 
-      const res = await deletaLead({id});
+      // Aqui eu preciso remover o lead
 
-      
+      const leads = localStorage.getItem('leads');
 
-      router.replace(`/leads/${params.user}`);
+      if (!leads) {
+        localStorage.setItem('leads', JSON.stringify([]));
+        router.replace(`/leads/${params.user}`);
+        return;
+      }
 
+      const leadsArray: Lead[] = JSON.parse(leads);
+
+      const filteredLeads = leadsArray.filter((lead) => lead.foneNumber !== params.lead.toString());
+
+      localStorage.setItem('leads', JSON.stringify(filteredLeads));
+
+      router.back();
     }
 
   return (
